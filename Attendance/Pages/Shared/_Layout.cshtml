@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Attendance</title>
+    <link href="~/css/site.css" rel="stylesheet" />
+    <script src="https://unpkg.com/mitt/dist/mitt.umd.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script defer src="https://unpkg.com/vue-router@4.0.15/dist/vue-router.global.js"></script>
+    
+    <script src="~/js/components/web-components.js"></script>
+
+    <script defer src="~/js/components/AppNav.js"></script>
+    <script defer src="~/js/components/message-bar.js"></script>
+    <script defer src="~/js/components/active-search.js"></script>
+    <script defer src="~/js/components/student-card.js"></script>
+    <script defer src="~/js/components/recently-viewed-widget.js"></script>
+
+    <script defer src="~/js/views/students.js"></script>
+    <script defer src="~/js/views/student.js"></script>
+    <script defer src="~/js/views/modules.js"></script>
+    <script defer src="~/js/views/module.js"></script>
+    <script defer src="~/js/app.js"></script>
+    
+
+    <style>
+        
+    </style>
+
+</head>
+<body>
+    
+    <header id="nav">
+        <app-nav>
+            <router-link to="/">Home</router-link>
+            <router-link to="/students">Students</router-link>
+            <router-link to="/modules">Modules</router-link>
+        </app-nav>
+    </header>
+    
+    <h1>Attendance Management</h1>
+    
+    <main role="main" id="main">
+        @RenderBody()
+
+        <message-bar></message-bar>
+    </main>
+    
+
+    
+
+    <footer class="border-top footer text-muted">
+        &copy; 2023 - AttendanceAPI - <a asp-area="" asp-page="/Privacy">Privacy</a>
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+    
+</body>
+</html>

@@ -1,0 +1,38 @@
+﻿.message-bar {
+    --_background-colour: var(--background-colour, silver);
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    align-content: center;
+    width: 100%;
+    justify-content: center;
+    height: 0;
+    border:0;
+
+    
+}
+
+    .message-bar.visible {
+        height:3rem;
+    }
+
+    .message-bar span {
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50%;
+        background-color: var(--_background-colour);
+    }
+
+    .message-bar.error{
+        --background-colour:crimson;
+    }
+
+    .message-bar.info {
+        --background-colour: lime;
+    }
+
+    .message-bar.warning {
+        --background-colour: yellow;
+    }

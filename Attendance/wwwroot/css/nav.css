@@ -1,0 +1,32 @@
+﻿nav {
+
+    --_nav-background: color-mix(in srgb, var(--primary-colour), black);
+    --_hover-background: color-mix(in srgb, var(--primary-accent-colour), white 95%);
+    --_nav-item-border: color-mix(in srgb, var(--_nav-background) 75%, black);
+    
+    box-sizing:content-box !important;
+    background-color: var(--_nav-background);
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    gap:1rem;
+}
+
+    nav a,
+    nav a:visited{
+        padding: 0.5rem;
+        border-radius: 0.3rem;
+        color: whitesmoke;
+        flex-basis:10%;
+        text-align:center;
+        
+        border:2px solid var(--_nav-item-border);
+    }
+
+        nav a:hover {
+            background-color: var(--_hover-background);
+            color:inherit;
+            transition: background-color 0.2s ease-in;
+        }

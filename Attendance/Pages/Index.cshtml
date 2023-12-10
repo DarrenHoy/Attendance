@@ -1,0 +1,17 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="view" v-bind:class="{ out: isViewOut, in: !isViewOut && !isLoading }">
+    <router-view></router-view>
+</div> 
+<div class="loader" v-bind:class="{visible:isLoading}">
+    <div class="spinner"></div>
+</div>
+
+
+
+
+
