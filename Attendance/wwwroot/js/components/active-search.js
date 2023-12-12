@@ -48,15 +48,15 @@
                         v-on:keydown.escape.stop.prevent="clear">
                             
                         <header>
-                            <form-input type="text" :value="searchText" @input="inputChanged" :placeholder="placeholder"></form-input>
+                            <input type="text" :value="searchText" @input="inputChanged" :placeholder="placeholder" />
                             <primary-button @click="search">Search</primary-button>
                         </header>
-                        <div class="results">
+                        <div class="results" v-if="results.length > 0">
                             <div tabindex="-1"
                                 ref="results"
                                 v-for="result in results"
-                                v-on:keydown.enter.prevent.stop="this.$emit('item-selected', result)"
-                                @click="this.$emit('item-selected',result)">
+                                v-on:keydown.enter.prevent.stop="select(result)"
+                                @click="select(result)">
                                 <slot :item="result" ></slot>
                             </div>
                         </div>
@@ -94,6 +94,11 @@
                     clear() {
                         this.results = [];
                         this.activeIndex = - 1;
+                    },
+                    select(item) {
+                        this.clear();
+                        this.searchText = "";
+                        this.$emit('item-selected', item);
                     }
 
                 }
@@ -144,6 +149,23 @@
             outline:none;
             background-color:color-mix(in srgb, var(--_separator-colour), whitesmoke 90%);
         }
+
+        .active-search input {
+                --_background-colour:var(--primary-colour, darkseagreen);
+                --_border-colour:color-mix(in srgb, var(--_background-colour) 70%, black);
+
+                padding:0.5rem;
+                border-radius:0.5rem;
+                border-width:2px;
+                border-color:var(--_border-colour);
+                border-style:solid;
+                flex-grow:1;
+            }
+
+            .active-search input:focus,
+            .active-search input:focus-visible {
+                box-shadow: 0 0 0.5rem var(--_border-colour);
+            }
     `
     document.body.appendChild(styles);
 }());

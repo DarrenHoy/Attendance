@@ -53,6 +53,17 @@ const apiService =
     getCourseModuleClassLists(id) {
         return fetch(`/api/coursemodules/${id}/classlists`)
             .then(res => res.json());
+    },
+    registerStudentOnModule(moduleId, studentId) {
+        var body = JSON.stringify({ studentId });
+        return fetch(`/api/coursemodules/${moduleId}/register`,
+            {
+                method: "post",
+                headers: {
+                    "content-type":"application/json"
+                },
+                body
+            }).then(res => res.ok ? res.json() : res.json().then(r => Promise.reject(r)));
     }
 };
 

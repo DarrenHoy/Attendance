@@ -82,7 +82,9 @@ class FormInput extends HTMLElement {
 
     attributeChangedCallback(item, from, to) {
         const setInputAtt = att => value => this.#input.setAttribute(att, value);
-        const setValue = setInputAtt(item);
+        const setInputValue = value => this.#input.value = value;
+
+        const setValue = (item == "formvalue") ? setInputValue : setInputAtt(item);
         if (from != to) {
             setValue(to);
         }

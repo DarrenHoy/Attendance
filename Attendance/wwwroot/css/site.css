@@ -3,7 +3,8 @@
 
 :root {
     --primary-colour: #b09fdb;
-    --primary-accent-colour: #0b3939;
+    --primary-accent-colour: #6d5f6e;
+    --border-colour: color-mix(in srgb, var(--primary-colour), black 40%);
 }
 
 html, body, body *{
@@ -46,8 +47,9 @@ a:visited {
     text-decoration:none;
     color:inherit;
 }
-header{
-    
+body > header{
+    border-top: 4px solid;
+    border-color: var(--primary-accent-colour);
 }
 
 main {
@@ -60,8 +62,12 @@ main {
     flex-direction:column;
 }
 
-footer{
+body > footer{
     height:2rem;
+    background-color: var(--primary-accent-colour);
+    color:whitesmoke;
+    padding:0.5rem;
+    font-size:small;
 }
 
 .loader {
@@ -89,6 +95,11 @@ footer{
     border: 10px solid #ccc;
     border-top-color: var(--primary-colour);
     animation: spin 1s linear infinite;
+}
+
+dialog {
+    width:80%;
+    height:80%;
 }
 
 @keyframes spin {

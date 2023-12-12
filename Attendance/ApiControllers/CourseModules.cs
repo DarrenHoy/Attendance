@@ -58,10 +58,7 @@ namespace AttendanceAPI.ApiControllers
         public async Task<IResult> Register([FromRoute] int id, [FromBody] CreateModuleRegistrationDTO registration)
         {
 
-            if(id != registration.CourseModuleId)
-            {
-                ModelState.AddModelError("CourseModuleId", "The value for CourseModuleId does not match the URL path");
-            }
+            
 
             var hasModule = _context.CourseModules.Where(m => m.Id == id).Any();
 
@@ -77,7 +74,7 @@ namespace AttendanceAPI.ApiControllers
             }
 
             var isRegistered = _context.ModuleRegistrations.Where(
-                r => r.CourseModuleId == registration.CourseModuleId
+                r => r.CourseModuleId == id
                 && r.StudentId == registration.StudentId).Any();
 
             if(isRegistered)
@@ -92,15 +89,22 @@ namespace AttendanceAPI.ApiControllers
 
             var moduleRegistration = new ModuleRegistration
             {
-                CourseModuleId = registration.CourseModuleId,
+                CourseModuleId = id,
                 StudentId = registration.StudentId
             };
 
             _context.ModuleRegistrations.Add(moduleRegistration);
             await _context.SaveChangesAsync();
 
+            var created = await _context.ModuleRegistrations
+                .Where(m => m.Id == moduleRegistration.Id)
+                .Include(r => r.CourseModule)
+                .Include(m => m.Student)
+                .FirstAsync();
+                
+
             var uri = Url.ActionLink("Get","ModuleRegistrations", new { id =  moduleRegistration.Id });
-            return Results.Created(uri, moduleRegistration);
+            return Results.Created(uri, moduleRegistration.ToDTO());
         }
 
         [HttpGet("{id}/classlists")]
