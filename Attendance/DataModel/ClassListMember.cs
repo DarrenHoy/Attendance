@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace AttendanceAPI.DataModel
 {
     [Table("CourseModuleClassListMembers")]
-    public class CourseModuleClassListMember
+    public class ClassListMember
     {
         [Key]
         public int Id { get; set; }

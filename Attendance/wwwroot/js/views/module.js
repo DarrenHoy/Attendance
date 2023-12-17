@@ -19,13 +19,21 @@
                     <div class="module-view-main">
                         <block-section title="Registered students">
                             <template v-slot:actions>
-                                <button @click="showRegisterStudentDialog">+</button>
+                                <button class="icon-button" @click="showRegisterStudentDialog">
+                                    <img src="/icons/plus-circle.svg" alt="plus sign"/>
+                                    <span>Add</span>
+                                </button>
                             </template>
 
                             <template v-slot:body>
                                 <div v-if="this.registrations.length > 0">
-                                    <div v-for="registration in registrations" @click="() => this.$router.push('/students/' + registration.student.id)">
-                                        {{registration.student.firstName}} {{registration.student.surname}}
+                                    <div class="list-item" v-for="registration in registrations">
+                                        <router-link :to="studentUrl(registration)">
+                                            {{registration.student.firstName}} {{registration.student.surname}}
+                                        </router-link>
+                                        <button class="icon-button" @click="beginDeregister(registration)">
+                                            <img src="/icons/trash3.svg" alt="trash" />
+                                        </button>
                                     </div>
                                 </div>
                                 <div v-else>
@@ -36,11 +44,17 @@
                     
                     
                         <block-section title="Class Lists">
+                            <template v-slot:actions>
+                                <button class="icon-button" @click="showRegisterStudentDialog"><img src="/icons/plus-circle.svg" alt="plus sign"/></button>
+                            </template>
+
                             <template v-slot:body>
                                 <div v-if="this.classLists.length > 0">
-                                <div v-for="classList in classLists">
-                                    {{classList.title}}
-                                </div>
+                                    <div class="list-item" v-for="classList in classLists">
+                                        <router-link :to="classListUrl(classList)">
+                                            {{classList.title}}
+                                        </router-link>
+                                    </div>
                                 </div>
                                 <div v-else>
                                     No class lists are defined for this module
@@ -98,6 +112,12 @@
                     "modal":components.Modal()
                 },
                 methods: {
+                    studentUrl(registration) {
+                        return `/students/${registration.student.id}`;
+                    },
+                    classListUrl(classList) {
+                        return `/classlists/${classList.id}`;
+                    },
                     showRegisterStudentDialog() {
                         this.studentToRegister = {};
                         var modal = this.$refs.registerStudent;
@@ -124,7 +144,34 @@
                             });
                         this.$refs.registerStudent.close();
                         this.$root.isLoading = true;
+                    },
+                    beginDeregister(registration) {
+                        var name = registration.student.firstName + " " + registration.student.surname;
+                        var deleteConfirmed = confirm(`Are you sure you want to deregister ${name}?`);
+                        if (deleteConfirmed) {
+                            this.confirmDeregister(registration);
+                        }
+                    },
+                    confirmDeregister(registration) {
+                        var name = registration.student.firstName + " " + registration.student.surname;
+                        apiService.deregisterStudentFromModule(registration)
+                            .then(r => {
+                                var newRegistrations = this.registrations.filter(r => r !== registration);
+                                this.registrations = newRegistrations;
+
+                                eventSource.emit('message', {
+                                    state: "info",
+                                    message: `Student ${name} deregistered`
+                                });
+                            })
+                            .catch(r => eventSource.emit('message', {
+                                    state: "error",
+                                    message: `Could not deregister ${name} becaue of an error`
+                                })
+                            );
                     }
+
+
                 },
                 beforeRouteEnter: (to, from, next) => {
                     navigationService.navigate(to, from, next)
@@ -158,6 +205,26 @@
 
         .module-view-main .block-section {
             width:33%;
+        }
+
+        .module-view-main .list-item{
+            height:2rem;
+            display: flex;
+            align-items:center;
+            justify-content:space-between;
+            cursor:pointer;
+        }
+
+        .module-view-main .list-item:hover{
+            box-shadow:0 0 0.2rem silver;
+            width:100%;
+            font-size:1.05rem;
+            transition: font-size 0.1s;
+        }
+
+        .module-view-main .list-item a:hover {
+            text-decoration:underline;
+            
         }
     `
 

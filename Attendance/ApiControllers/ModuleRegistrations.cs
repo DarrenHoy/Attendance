@@ -37,5 +37,20 @@ namespace AttendanceAPI.ApiControllers
 
             return Results.Ok(moduleRegistration);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IResult> Delete(int id)
+        {
+            var moduleRegistration = await _context.ModuleRegistrations.FindAsync(id);
+            if (moduleRegistration == null)
+            {
+                return Results.NotFound();
+            }
+
+            _context.ModuleRegistrations.Remove(moduleRegistration);
+            await _context.SaveChangesAsync();
+            return Results.NoContent();
+
+        }
     }
 }

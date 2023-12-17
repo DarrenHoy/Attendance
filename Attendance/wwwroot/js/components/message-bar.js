@@ -19,7 +19,7 @@
                         info: state == 'info',
                         warning: state == 'warning'
                     }">
-                    <span>{{message}}</span>
+                    <div>{{message}}</div>
                 </div>
             `,
             created() {

@@ -2,6 +2,9 @@
 using AttendanceAPI.DataModel.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Immutable;
+using System.Dynamic;
+using System.Linq;
 
 namespace AttendanceAPI.ApiControllers
 {
@@ -24,11 +27,22 @@ namespace AttendanceAPI.ApiControllers
         [HttpGet("{id}")]
         public async Task<IResult> Get(int id)
         {
-            var result = await _context.CourseModules.FindAsync(id);
-            if(result == null)
+            var courseModule = await _context.CourseModules.FindAsync(id);
+            if(courseModule == null)
             {
                 return Results.NotFound();
             }
+
+            dynamic links = new ExpandoObject();
+            links.registered = Url.ActionLink("GetRegistered","CourseModules", new { id = id });
+            links.classLists = Url.ActionLink("Get", "CourseModules", new { id = id }) + "/ClassLists";
+
+            dynamic result = new ExpandoObject();
+            result.id = courseModule.Id;
+            result.code = courseModule.Code;
+            result.title = courseModule.Title;
+            result.links = links;
+            
 
             return Results.Ok(result);
         }
@@ -44,14 +58,21 @@ namespace AttendanceAPI.ApiControllers
                 return Results.NotFound();
             }
 
-            var result = await _context.ModuleRegistrations
+            var registered = await _context.ModuleRegistrations
                             .Include(m => m.Student)
-                            .Include(m => m.CourseModule)
                             .Where(m => m.CourseModuleId == id)
                             .ToListAsync();
 
-            var registrations = result.Select(m => m.ToDTO());
-            return Results.Ok(registrations);
+
+            dynamic result = registered.Select(r =>
+            {
+                dynamic obj = new ExpandoObject();
+                obj.id = r.Id;
+                obj.student = r.Student.ToDTO();
+                return obj;
+            }).ToList();
+            
+            return Results.Ok(result);
         }
 
         [HttpPost("{id}/register")]
@@ -107,6 +128,8 @@ namespace AttendanceAPI.ApiControllers
             return Results.Created(uri, moduleRegistration.ToDTO());
         }
 
+        
+
         [HttpGet("{id}/classlists")]
         public async Task<IResult> GetClassLists(int id)
         {
@@ -121,9 +144,8 @@ namespace AttendanceAPI.ApiControllers
             var result = await _context.CourseModuleClassLists
                             .Where(m => m.CourseModuleId == id)
                             .ToListAsync();
-
-            var classLists = result.Select(m => m.ToDTO());
-            return Results.Ok(classLists);
+            
+            return Results.Ok(result);
         }
     }
 }

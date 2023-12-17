@@ -19,53 +19,7 @@ const navigationService = {
     }
 };
 
-const apiService =
-{
-    getStudents(searchText) {
-        var filter = (searchText ?? "").toLowerCase();
-        if (filter == "") {
-            return fetch('/api/students')
-                .then(res => res.json());
-        }
-        else {
-            return fetch(`/api/students/find/${searchText}`)
-                .then(res => res.json());
-        }
-            
-    },
-    getStudent(id) {
-        return fetch(`/api/students/${id}`)
-            .then(res => res.json())
-    },
-    getModules() {
-        return fetch(`/api/coursemodules`)
-            .then(res => res.json())
-    },
-    getCourseModule(id) {
-        return fetch(`/api/coursemodules/${id}`)
-            .then(res => res.json());
-    },
-    getCourseModuleRegisteredStudents(id) {
-        return fetch(`/api/coursemodules/${id}/registered`)
-            .then(res => res.json());
-    },
-
-    getCourseModuleClassLists(id) {
-        return fetch(`/api/coursemodules/${id}/classlists`)
-            .then(res => res.json());
-    },
-    registerStudentOnModule(moduleId, studentId) {
-        var body = JSON.stringify({ studentId });
-        return fetch(`/api/coursemodules/${moduleId}/register`,
-            {
-                method: "post",
-                headers: {
-                    "content-type":"application/json"
-                },
-                body
-            }).then(res => res.ok ? res.json() : res.json().then(r => Promise.reject(r)));
-    }
-};
+const apiService = services.ApiService();
 
 const localStorageService = (function () {
 
@@ -134,6 +88,10 @@ const routes = [
     {
         path: "/modules/:id",
         component: views.Module(apiService, navigationService, eventSource, localStorageService)
+    },
+    {
+        path: "/classlists/:id",
+        component: views.ManageClasslists(apiService, eventSource)
     },
     { path: "/", component: { template: "<div><h2>Home page</h2></div>" } }
 ]

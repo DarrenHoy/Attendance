@@ -133,3 +133,25 @@ div.view {
         opacity: 0;
         transition: opacity 0.2s ease-out;
     }
+
+
+button.icon-button {
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:0.2rem;
+    padding:0.5rem;
+    border-radius:0.2rem;
+}
+
+    button.icon-button:hover {
+        --_background-colour: color-mix(in srgb, var(--primary-colour), whitesmoke 80%);
+        background-color:var(--_background-colour);
+    }
+
+    button.icon-button img {
+        height: 100%;
+        width: 100%;
+    }

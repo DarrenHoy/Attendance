@@ -34,6 +34,7 @@
             border-color: var(--border-colour);
             border-radius:0.2rem;
             padding:0.5rem;
+            
 
         }
 
@@ -41,9 +42,11 @@
             display:flex;
             flex-direction:row;
             justify-content:space-between;
+            align-items:center;
             padding-bottom:0.5rem;
             border-bottom:1px solid;
             margin-bottom:0.5rem;
+            min-height:2.5rem;
         }
 
         .block-section header > span.title {

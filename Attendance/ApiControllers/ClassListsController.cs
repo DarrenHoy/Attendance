@@ -1,18 +1,20 @@
-﻿using AttendanceAPI.DataModel;
+﻿using Attendance.DataModel.DTO;
+using AttendanceAPI.DataModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Dynamic;
 using System.Runtime.InteropServices;
 
 namespace AttendanceAPI.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CourseModuleClassListsController : ControllerBase
+    public class ClassListsController : ControllerBase
     {
         private AttendanceContext _context;
 
-        public CourseModuleClassListsController(AttendanceContext context) 
+        public ClassListsController(AttendanceContext context) 
         {
             _context = context;
         }
@@ -27,12 +29,20 @@ namespace AttendanceAPI.ApiControllers
         public async Task<IResult> Get(int id)
         {
             var result = await _context.CourseModuleClassLists.FindAsync(id);
+
             if(result == null)
             {
                 return Results.NotFound();
             }
 
-            return Results.Ok(result);
+            var moduleLink = Url.ActionLink("Get","CourseModules", new { Id = result.CourseModuleId });
+            var membersLink = Url.ActionLink("Get", "ClassLists", new { id = id }) + "/members";
+
+            dynamic links = new ExpandoObject();
+            links.module = moduleLink;
+            links.members = membersLink;
+
+            return Results.Ok(result.ToDTO(links));
         }
 
         [HttpGet("{id}/members")]
@@ -46,11 +56,19 @@ namespace AttendanceAPI.ApiControllers
 
             var members = 
                 _context
-                .CourseModuleClassListMembers
+                .ClassListMembers
                 .Where(m => m.CourseModuleClassListId == id)
                 .Include(m => m.Student);
 
-            return await Task.Run(() => Results.Ok(members));
+            dynamic result = new ExpandoObject();
+            result.members = members.Select(m =>
+                new {
+                    id = m.Id,
+                    student = m.Student.ToDTO(),
+                }
+            ).ToList();
+
+            return await Task.Run(() => Results.Ok(result));
         }
 
         [HttpPost]
@@ -77,21 +95,16 @@ namespace AttendanceAPI.ApiControllers
         }
 
         [HttpPost("{id}/members")]
-        public async Task<IResult> PostMember([FromRoute] int id, [FromBody] CourseModuleClassListMember member)
+        public async Task<IResult> PostMember([FromRoute] int id, [FromBody] CreateCourseModuleClassListMemberDTO member)
         {
-            if(member.CourseModuleClassListId != id)
-            {
-                ModelState.AddModelError("CourseModuleClassListId", "The ID does not match the ID specified in the URL");
-            }
-
-
             var classList = await _context.CourseModuleClassLists.FindAsync(id);
             var hasClassList = classList != null;
 
             var student = await _context.Students.FindAsync(member.StudentId);
             var hasStudent = student != null;
 
-            var isRegistered = _context.CourseModuleClassListMembers.Where(l => l.CourseModuleClassListId == member.CourseModuleClassListId && l.StudentId == member.StudentId);
+            var isRegistered = _context.ClassListMembers
+                .Where(l => l.CourseModuleClassListId == id && l.StudentId == member.StudentId);
 
             if (isRegistered.Any())
             {
@@ -115,10 +128,12 @@ namespace AttendanceAPI.ApiControllers
                 return Results.BadRequest(ModelState);
             }
 
-            _context.CourseModuleClassListMembers.Add(member);
+            var classListMember = new ClassListMember {CourseModuleClassListId = id, StudentId = member.StudentId };
+
+            _context.ClassListMembers.Add(classListMember);
             await _context.SaveChangesAsync();
 
-            var uri = Url.ActionLink("Get", "CourseModuleClassLists", new { id = member.Id });
+            var uri = Url.ActionLink("Get", "CourseModuleClassLists", new { id = classListMember.Id });
             return Results.Created(uri, member);
         }
     }

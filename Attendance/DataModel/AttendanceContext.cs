@@ -24,6 +24,6 @@ namespace AttendanceAPI.DataModel
         public DbSet<ModuleRegistration> ModuleRegistrations { get; set; }
         public DbSet<TeachingSession> TeachingSessions { get; internal set; }
         public DbSet<CourseModuleClassList> CourseModuleClassLists { get; set; }
-        public DbSet<CourseModuleClassListMember> CourseModuleClassListMembers { get; set; }
+        public DbSet<ClassListMember> ClassListMembers { get; set; }
     }
 }

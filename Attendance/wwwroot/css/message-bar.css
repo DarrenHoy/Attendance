@@ -9,30 +9,36 @@
     height: 0;
     border:0;
     margin-bottom:0.5rem;
+    opacity:0;
     
 }
 
     .message-bar.visible {
         height:5rem;
+        opacity:1;
+        transition:opacity 0.6s ease-out;
     }
 
-    .message-bar span {
+    .message-bar div {
         border-radius: 0.5rem;
         display: flex;
         align-items: center;
         justify-content: center;
         width: 50%;
         background-color: var(--_background-colour);
+        border:3px solid;
+        color:whitesmoke;
+        border-color:var(--primary-accent-colour);
     }
 
-    .message-bar.error{
-        --background-colour:crimson;
+    .message-bar.error {
+        --background-colour: #8b1128;
     }
 
     .message-bar.info {
-        --background-colour: lime;
+        --background-colour: color-mix(in srgb, var(--primary-accent-colour), grey 80%);
     }
 
     .message-bar.warning {
-        --background-colour: yellow;
+        --background-colour: #796210;
     }
