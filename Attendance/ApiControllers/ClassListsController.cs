@@ -71,28 +71,7 @@ namespace AttendanceAPI.ApiControllers
             return await Task.Run(() => Results.Ok(result));
         }
 
-        [HttpPost]
-        public async Task<IResult> Post([FromBody] CourseModuleClassList courseModuleClassList)
-        {
-            var courseModule = await _context.CourseModules.FindAsync(courseModuleClassList.CourseModuleId);
-
-            if(courseModule == null)
-            {
-                ModelState.AddModelError("CourseModuleId",
-                    $"A CourseModule entity with the ID {courseModuleClassList.CourseModuleId} could not be found");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return Results.BadRequest(ModelState);
-            }
-
-            _context.CourseModuleClassLists.Add(courseModuleClassList);
-            await _context.SaveChangesAsync();  
-
-            var url = Url.ActionLink("Get", "CourseModuleClassList", new { id = courseModuleClassList.Id });
-            return Results.Created(url, courseModuleClassList);
-        }
+        
 
         [HttpPost("{id}/members")]
         public async Task<IResult> PostMember([FromRoute] int id, [FromBody] CreateCourseModuleClassListMemberDTO member)

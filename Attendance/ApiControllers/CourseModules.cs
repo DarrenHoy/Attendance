@@ -1,4 +1,5 @@
-﻿using AttendanceAPI.DataModel;
+﻿using Attendance.DataModel.DTO;
+using AttendanceAPI.DataModel;
 using AttendanceAPI.DataModel.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -146,6 +147,29 @@ namespace AttendanceAPI.ApiControllers
                             .ToListAsync();
             
             return Results.Ok(result);
+        }
+
+        [HttpPost("{id}/classlists")]
+        public async Task<IResult> Post([FromRoute] int id, [FromBody] CreateClassListDTO model)
+        {
+            var courseModule = await _context.CourseModules.FindAsync(id);
+
+            if (courseModule == null)
+            {
+                return Results.NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return Results.BadRequest(ModelState);
+            }
+
+            var classList = new CourseModuleClassList() {  CourseModuleId = id, Title = model.Title };
+            _context.CourseModuleClassLists.Add(classList);
+            await _context.SaveChangesAsync();
+
+            var url = Url.ActionLink("Get", "CourseModuleClassList", new { id = classList.Id });
+            return Results.Created(url, model);
         }
     }
 }

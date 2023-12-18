@@ -50,6 +50,17 @@
                                         .then(registered => ({...data, registered})))
                         });
                 },
+                createClassList(moduleId, title) {
+                    var body = JSON.stringify({ title });
+                    return fetch(`/api/CourseModules/${moduleId}/ClassLists`,
+                        {
+                            method: "POST",
+                            body,
+                            headers: {
+                                "content-type":"application/json"
+                            }
+                        }).then(res => res.json())
+                },
                 registerStudentOnModule(moduleId, studentId) {
                     var body = JSON.stringify({ studentId });
                     return fetch(`/api/coursemodules/${moduleId}/register`,

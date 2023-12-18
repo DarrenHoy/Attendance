@@ -155,3 +155,35 @@ button.icon-button {
         height: 100%;
         width: 100%;
     }
+
+form label{
+    display:block;
+    margin-bottom:0.5rem;
+}
+
+form input {
+    padding:0.5rem;
+    width:100%;
+    border-radius:0.2rem;
+    border:1px solid;
+    border-color:var(--primary-colour);
+}
+button {
+    --_background-colour: var(--primary-colour, darkseagreen);
+    --_border-colour: color-mix(in srgb, var(--_background-colour) 70%, black);
+    background-color: var(--_background-colour);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border-width: 2px;
+    border-color: var(--_border-colour);
+    border-style: solid;
+    cursor: pointer;
+}
+
+    button[disabled]{
+        pointer-events:none;
+    }
+    
+    button:hover {
+        background-color: color-mix(in srgb, var(--_background-colour) 60%, whitesmoke);
+    }

@@ -12,6 +12,7 @@
                             {{title}}
                             <slot name="header">
                             </slot>
+                            <img src="/icons/x-circle.svg" alt="icon to close the dialog" @click="close" />
                         </header>
                         <div class="body">
 
@@ -54,7 +55,16 @@
                 padding-bottom:0.5rem;
                 border-bottom: 1px solid;
                 border-color: var(--primary-accent-colour);
+                display:flex;
+                flex-direction:row;
+                justify-content:space-between;
+                align-items:center;
             }
+
+                dialog.modal > header img {
+                    height:1.5rem;
+                    cursor:pointer;
+                }
 
             dialog.modal > div.body {
                 flex-basis:auto;

@@ -9,7 +9,9 @@
                         module: {},
                         registrations: [],
                         classLists: [],
-                        studentToRegister: {}
+                        teachingSessions:[],
+                        studentToRegister: {},
+                        createClassListModel: {}
                     }
                 },
                 template:
@@ -45,7 +47,7 @@
                     
                         <block-section title="Class Lists">
                             <template v-slot:actions>
-                                <button class="icon-button" @click="showRegisterStudentDialog"><img src="/icons/plus-circle.svg" alt="plus sign"/></button>
+                                <button class="icon-button" @click="showCreateClassListDialog"><img src="/icons/plus-circle.svg" alt="plus sign"/></button>
                             </template>
 
                             <template v-slot:body>
@@ -65,13 +67,13 @@
 
                         <block-section title="Teaching Sessions">
                             <template v-slot:body>
-                                <div v-if="this.classLists.length > 0">
-                                <div v-for="classList in classLists">
-                                    {{classList.title}}
+                                <div v-if="this.teachingSessions.length > 0">
+                                <div v-for="session in teachingSessions">
+                                    
                                 </div>
                                 </div>
                                 <div v-else>
-                                    No class lists are defined for this module
+                                    No teaching sessions are defined for this module
                                 </div>
                             </template>
                         </block-section>
@@ -99,6 +101,19 @@
                             <button @click="() => this.$refs.registerStudent.close()">Cancel</button>
                         </template>
                     </modal>
+
+                    <modal ref="createClassList" title="Create Class List">
+                        <template v-slot:body>
+                            <form>
+                                <h3>Provide a name</h3>
+                                <label for="classListName">Name</label>
+                                <input name="classListName" type="text" v-model="createClassListModel.name" />
+                            </form>
+                        </template>
+                        <template v-slot:footer>
+                            <button :disabled="(createClassListModel.name?.length ?? 0) == 0" @click="confirmCreateClassList">Create</button>
+                        </template>
+                    </modal>
                 `,
                 computed: {
                     hasStudentToRegister() {
@@ -122,6 +137,10 @@
                         this.studentToRegister = {};
                         var modal = this.$refs.registerStudent;
                         modal.show();
+                    },
+                    showCreateClassListDialog() {
+                        this.createClassListModel = {};
+                        this.$refs.createClassList.show();
                     },
                     setData(searchModel, id) {
                         apiService.getStudents(searchModel.searchText)
@@ -169,6 +188,12 @@
                                     message: `Could not deregister ${name} becaue of an error`
                                 })
                             );
+                    },
+                    confirmCreateClassList() {
+                        this.$refs.createClassList.close();
+                        apiService.createClassList(this.module.id, this.createClassListModel.name)
+                            .then(classList => this.classLists.push(classList))
+                            .catch(err => eventSource.emit('message', { state: 'error', message: err }));
                     }
 
 
